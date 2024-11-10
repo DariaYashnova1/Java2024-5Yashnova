@@ -3,7 +3,7 @@ import java.util.*;
 import static org.junit.Assert.*;
 
 public class Main {
-    public static <Iterator> void main(String[] args) {
+    public static void main(String[] args) {
         //Test0: Empty List
         MyLinkedList<Integer> lstInt = new MyLinkedList<>();
         assertEquals(0, lstInt.size());
