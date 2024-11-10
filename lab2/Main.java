@@ -7,7 +7,7 @@ public class Main {
         //Test0: Empty List
         MyLinkedList<Integer> lstInt = new MyLinkedList<>();
         assertEquals(0, lstInt.size());
-        //lstInt.remove() -- NSE exception
+        //lstInt.remove() ;//-- NPE exception
 
         //Test1: Singleton
         lstInt.add(2);
@@ -154,6 +154,20 @@ public class Main {
         assertEquals("2", newStrList.get(0));
         assertEquals(1, newStrList.size());
 
+        //test 9:Linked List Behavior
+        MyLinkedList<Integer> myList = new MyLinkedList<>();
+        LinkedList<Integer> javaList = new LinkedList<>();
+
+        // Add elements to both lists
+        List<Integer> elements = Arrays.asList(1, 2, 3, 4, 5);
+        myList.addAll(elements);
+        javaList.addAll(elements);
+
+        // Test basic operations (add, get, size)
+        assertEquals(myList.size(), javaList.size());
+        for (int i = 0; i < myList.size(); i++) {
+            assertEquals(myList.get(i), javaList.get(i));
+        }
     }
 
 
