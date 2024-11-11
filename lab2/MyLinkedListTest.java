@@ -137,6 +137,7 @@ public class MyLinkedListTest {
         intIter.next();
         assertEquals(2, intIter.nextIndex());
     }
+
     @Test
     public void testAddAll() {
         MyLinkedList<Integer> newIntList = new MyLinkedList<>();
@@ -147,6 +148,7 @@ public class MyLinkedListTest {
             assertEquals(new Integer(i), newIntList.get(i - 1));
         }
     }
+
     @Test
     public void testRemoveAll() {
         MyLinkedList<Integer> newIntList = new MyLinkedList<>();
@@ -166,6 +168,7 @@ public class MyLinkedListTest {
         assertEquals(2, newIntList.size());
 
     }
+
     @Test
     public void testRetainAll() {
         MyLinkedList<String> newStrList = new MyLinkedList<>();
@@ -184,6 +187,7 @@ public class MyLinkedListTest {
         assertEquals("2", newStrList.get(0));
         assertEquals(1, newStrList.size());
     }
+
     @Test
     public void testCompareList_MyList() {
         MyLinkedList<Integer> myList = new MyLinkedList<>();
@@ -201,15 +205,42 @@ public class MyLinkedListTest {
         }
 
     }
+
     @Test
     public void testAddAftrRemove() {
         MyLinkedList<Integer> tmp = new MyLinkedList<>();
         tmp.add(3);
         tmp.remove();
 
-        assertEquals(0,tmp.size());
+        assertEquals(0, tmp.size());
         tmp.add(3);
-        assertEquals(1,tmp.size());
+        assertEquals(1, tmp.size());
+    }
+
+    @Test
+    public void testIndexOf() {
+        MyLinkedList<String> strList = new MyLinkedList<>();
+        strList.add("aa");
+        strList.add("bb");
+        strList.add("a");
+        strList.add("bbb");
+        strList.add("bb");
+        assertEquals(0, strList.indexOf("aa"));
+        assertEquals(1, strList.indexOf("bb"));
+        assertEquals(2, strList.indexOf("a"));
+    }
+
+    @Test
+    public void testLastIndexOf() {
+        MyLinkedList<String> strList = new MyLinkedList<>();
+        strList.add("aa");
+        strList.add("bb");
+        strList.add("a");
+        strList.add("bbb");
+        strList.add("bb");
+        assertEquals(0, strList.lastIndexOf("aa"));
+        assertEquals(4, strList.lastIndexOf("bb"));
+        assertEquals(2, strList.lastIndexOf("a"));
     }
 
 }
