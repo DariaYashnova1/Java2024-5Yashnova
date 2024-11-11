@@ -201,7 +201,7 @@ public class MyLinkedList<T> implements List<T> {
         return true;
     }
 
-    void removeNode(Node<T> n) {//удаляет ноду
+    private void removeNode(Node<T> n) {//удаляет ноду
         if (this.size() == 1) {
             head = null;
             tail = null;
@@ -260,6 +260,9 @@ public class MyLinkedList<T> implements List<T> {
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
+        if (index < 0 || index > this.size()) {
+            throw new IndexOutOfBoundsException("Wrong index: " + index);
+        }
         int cur_ind = index;
         for (var elem : c) {
             this.add(cur_ind, elem);
@@ -304,8 +307,8 @@ public class MyLinkedList<T> implements List<T> {
     }
 
     public void add(int ind, T data) throws IndexOutOfBoundsException {
-        if (ind < 0 || ind > this.size() - 1) {
-            throw new IndexOutOfBoundsException("Index in linked list is out of bounds");
+        if (ind < 0 || ind > this.size()) {
+            throw new IndexOutOfBoundsException("Wrong index: " + ind);
         }
         if (ind == this.size() - 1 || (this.size() == 0 && ind == 0)) {
             this.add(data);
@@ -348,8 +351,8 @@ public class MyLinkedList<T> implements List<T> {
     }
 
     private Node<T> getInd(int ind) {
-        if (ind > this.size() - 1 || ind < 0) {
-            throw new IndexOutOfBoundsException();
+        if (ind < 0 || ind > this.size()) {
+            throw new IndexOutOfBoundsException("Wrong index: " + ind);
         }
         Node<T> cur = head;
         while (ind > 0) {
@@ -369,8 +372,8 @@ public class MyLinkedList<T> implements List<T> {
     }
 
     public T remove(int ind) throws IndexOutOfBoundsException {
-        if (ind > this.size() || ind < 0) {
-            throw new IndexOutOfBoundsException();
+        if (ind < 0 || ind > this.size()) {
+            throw new IndexOutOfBoundsException("Wrong index: " + ind);
         }
         if (ind == 0) {
             return this.remove();
@@ -428,15 +431,15 @@ public class MyLinkedList<T> implements List<T> {
 
 
     public T get(int ind) {
-        if (ind > this.size() - 1 || ind < 0) {
-            throw new IndexOutOfBoundsException();
+        if (ind < 0 || ind > this.size()) {
+            throw new IndexOutOfBoundsException("Wrong index: " + ind);
         }
         return this.getInd(ind).data;
     }
 
     public T set(int ind, T data) {
-        if (ind > this.size() - 1 || ind < 0) {
-            throw new IndexOutOfBoundsException();
+        if (ind < 0 || ind > this.size()) {
+            throw new IndexOutOfBoundsException("Wrong index: " + ind);
         }
         Node<T> cur = this.getInd(ind);
         cur.data = data;
