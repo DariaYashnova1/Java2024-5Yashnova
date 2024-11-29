@@ -1,30 +1,34 @@
-abstract class Buyer extends Thread {
-    protected final CheeseShop shop;
+import java.lang.Thread;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-    public Buyer(CheeseShop shop, String name) {
-        super(name);
-        this.shop = shop;
-//        start();
-    }
-
-    @Override
-    public void run() {
-        try {
-            shop.getCheese(this);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+        Random random = new Random();
+        CheeseShop shop = new CheeseShop(9);
+        Thread shopThread = new Thread(shop);
+        for (int i = 0; i < 20; i++) {
+            Buyer buyer;
+            if (random.nextBoolean()){
+                buyer = new HumbleBuyer(shop,"Humble " + i);
+            }else{
+                buyer = new BraveBuyer(shop,"Brave " + i);
+            }
+            buyer.start();
         }
-    }
-}
+        Thread.sleep(2000);
 
-class BraveBuyer extends Buyer {
-    public BraveBuyer(CheeseShop shop, String name) {
-        super(shop, name);
-    }
-}
+        shop.printQueue();
 
-class HumbleBuyer extends Buyer {
-    public HumbleBuyer(CheeseShop shop, String name) {
-        super(shop, name);
+        shopThread.start();
+        Thread.sleep(5000);
+        Buyer nbuyer = new BraveBuyer(shop,"Brave #"  );
+        nbuyer.start();
+        Thread.sleep(2000);
+        Buyer nbuyer2 = new HumbleBuyer(shop,"Humble *"  );
+        nbuyer2.start();
+
+
     }
 }
