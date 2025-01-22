@@ -7,9 +7,14 @@ abstract class Buyer extends Thread {
     }
 
     @Override
-    public synchronized void run() {
+    public void run() {
         try {
-            shop.getCheese(this);
+            // зайти в очередь
+            // ждём, когда дойдёт до нас
+            synchronized (this){
+                wait();
+            }
+            this.interrupt();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
