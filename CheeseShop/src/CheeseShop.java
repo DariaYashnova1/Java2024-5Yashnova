@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 class CheeseShop implements Runnable {
     private BlockingQueue<Buyer> queue;
@@ -11,7 +11,7 @@ class CheeseShop implements Runnable {
         buyers_num = capacity;
     }
 
-    public boolean chBoolInv() throws InterruptedException {
+    public  boolean chBoolInv() throws InterruptedException {
         //Thread.sleep(2000);
         int humbles = 0;
         int braves = 0;
@@ -26,7 +26,7 @@ class CheeseShop implements Runnable {
         return humbles >= 2 && braves >= 2;
     }
 
-    public synchronized void checkInv() throws InterruptedException {
+    public  void checkInv() throws InterruptedException {
         int humbles = 0;
         int braves = 0;
         List<Buyer> queueList = new ArrayList<>(queue);
@@ -40,31 +40,31 @@ class CheeseShop implements Runnable {
         if (braves < 2) {
             String name = "Brave " + (int) (Math.random() * 100);
             BraveBuyer newB = new BraveBuyer(this, name);
-            newB.start();
-
+            this.getCheese(newB);
         }
         if (humbles < 2) {
             String name = "Humble " + (int) (Math.random() * 100);
             HumbleBuyer newH = new HumbleBuyer(this, name);
             newH.start();
+            this.getCheese(newH);
 
         }
 
     }
 
 
-    public synchronized void getCheese(Buyer buyer) throws InterruptedException {
+    public void getCheese(Buyer buyer) throws InterruptedException {
         if(!emtyPlaces()){
             resizeQueue();
         }
         queue.put(buyer);
+        buyer.start();
         System.out.println(buyer.getName() + " get Cheese");
-        printQueue();
 
-        notify();
+        printQueue();
     }
 
-    private void moveBraves() throws InterruptedException {
+    private synchronized void moveBraves() throws InterruptedException {
         List<Buyer> queueList = new ArrayList<>(queue);
         for (int i = 1; i < queueList.size(); i++) {
             if (queueList.get(i) instanceof BraveBuyer && queueList.get(i - 1) instanceof HumbleBuyer) {
@@ -82,24 +82,28 @@ class CheeseShop implements Runnable {
 
     }
 
-    public void printQueue() {
+    public  void printQueue() {
         List<Buyer> queueList = new ArrayList<>(queue);
         System.out.println();
         for (Buyer buyer : queueList) {
             System.out.printf(buyer.getName() + "<-");
         }
         System.out.println();
+        //System.out.println(queue.size());
 
     }
 
-    public synchronized void serve() throws InterruptedException {
+    public void serve() throws InterruptedException {
         Buyer buyer = queue.take();
         moveBraves();
         //Thread.sleep((long) (Math.random() * 2000)); // Имитация времени обслуживания
+
         System.out.println(buyer.getName() + " cheese");
+        synchronized (buyer) {
+            buyer.notify();
+        }
         if(!chBoolInv()){
             checkInv();
-            wait();
         }
 
     }
@@ -117,7 +121,7 @@ class CheeseShop implements Runnable {
     @Override
     public void run() {
         try {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
                 serve(); // Обслуживаем покупателя
             }
         } catch (InterruptedException e) {
