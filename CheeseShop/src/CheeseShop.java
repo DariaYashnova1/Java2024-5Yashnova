@@ -11,7 +11,15 @@ class CheeseShop implements Runnable {
         buyers_num = capacity;
     }
 
-    public  boolean chBoolInv() throws InterruptedException {
+    public  void enterQueue(Buyer buyer) throws InterruptedException {
+        queue.put(buyer);
+    }
+
+    public  void leaveQueue() throws InterruptedException {
+        queue.take();
+    }
+
+    public  boolean chBoolInv() {
         //Thread.sleep(2000);
         int humbles = 0;
         int braves = 0;
@@ -26,7 +34,7 @@ class CheeseShop implements Runnable {
         return humbles >= 2 && braves >= 2;
     }
 
-    public  void checkInv() throws InterruptedException {
+    public void checkInv() {
         int humbles = 0;
         int braves = 0;
         List<Buyer> queueList = new ArrayList<>(queue);
@@ -40,29 +48,16 @@ class CheeseShop implements Runnable {
         if (braves < 2) {
             String name = "Brave " + (int) (Math.random() * 100);
             BraveBuyer newB = new BraveBuyer(this, name);
-            this.getCheese(newB);
+            newB.start();
         }
         if (humbles < 2) {
             String name = "Humble " + (int) (Math.random() * 100);
             HumbleBuyer newH = new HumbleBuyer(this, name);
             newH.start();
-            this.getCheese(newH);
-
         }
 
     }
 
-
-    public void getCheese(Buyer buyer) throws InterruptedException {
-        if(!emtyPlaces()){
-            resizeQueue();
-        }
-        queue.put(buyer);
-        buyer.start();
-        System.out.println(buyer.getName() + " get Cheese");
-
-        printQueue();
-    }
 
     private synchronized void moveBraves() throws InterruptedException {
         List<Buyer> queueList = new ArrayList<>(queue);
@@ -89,33 +84,27 @@ class CheeseShop implements Runnable {
             System.out.printf(buyer.getName() + "<-");
         }
         System.out.println();
-        //System.out.println(queue.size());
-
     }
 
     public void serve() throws InterruptedException {
-        Buyer buyer = queue.take();
+        Buyer buyer = queue.peek();
+        System.out.println(queue.size());
+        if (buyer == null) return;
+        synchronized (this){
+            synchronized (buyer){
+                buyer.notify();
+            }
+            System.out.println("Waiting shop");
+            this.wait();
+        }
+
         moveBraves();
         //Thread.sleep((long) (Math.random() * 2000)); // Имитация времени обслуживания
 
-        System.out.println(buyer.getName() + " cheese");
-        synchronized (buyer) {
-            buyer.notify();
-        }
         if(!chBoolInv()){
             checkInv();
         }
-
-    }
-    public boolean emtyPlaces(){
-        return queue.size()<buyers_num;
-    }
-
-    public void resizeQueue(){
-        BlockingQueue<Buyer> newQueue = new ArrayBlockingQueue<>(buyers_num+1); // Новый размер
-        queue.drainTo(newQueue);
-        buyers_num = buyers_num+1;
-        queue = newQueue;
+        printQueue();
     }
 
     @Override
